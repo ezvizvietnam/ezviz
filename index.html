@@ -176,42 +176,34 @@
 </head>
 <body class="h-full bg-gray-50 text-gray-800">
   <div id="app" class="h-full w-full overflow-auto">
-    <!-- Zalo Contact Bar -->
-    <div class="w-full flex justify-center bg-white border-b border-gray-200 py-3 sticky top-0 z-[60]">
-      <a href="https://zalo.me/ezvizvietnam" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center justify-center hover:scale-105 transition duration-200">
-        <img src="https://inkythuatso.com/uploads/images/2021/09/zalo-logo-inkythuatso-14-15-03-04.jpg" alt="Zalo OA" class="h-12 w-auto object-contain" loading="lazy" onerror="this.style.background='#e5e7eb';this.alt='Zalo';">
-        <span class="text-sm text-blue-600 font-semibold mt-1">Liên hệ trực tiếp</span>
-      </a>
-    </div>
-
     <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-[76px] z-50">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
-          <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQT5cft3SsnScJUvjaTu1tjuohBfKHija2Q6w&s" alt="Hieutech Logo" class="h-10 w-auto object-contain rounded" loading="lazy" onerror="this.style.background='#dbeafe';this.alt='Logo';">
-            <span id="site-title" class="text-2xl font-bold text-blue-700 tracking-tight">Hieutech</span>
-            <a href="https://www.youtube.com/@hieutech" target="_blank" rel="noopener noreferrer" class="ml-2 flex items-center text-red-600 hover:text-red-700 hover:scale-110 transition-transform duration-200" title="Kênh YouTube Hieutech">
+          <div class="flex items-center gap-2 cursor-pointer" onclick="switchTab('faq'); window.scrollTo(0,0);">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQT5cft3SsnScJUvjaTu1tjuohBfKHija2Q6w&s" alt="Support Logo" class="h-10 w-auto object-contain rounded" loading="lazy" onerror="this.style.background='#dbeafe';this.alt='Logo';">
+            <span id="site-title" class="text-2xl font-bold text-blue-700 tracking-tight">Support</span>
+            <a href="https://www.youtube.com/@hieutech" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="ml-2 flex items-center text-red-600 hover:text-red-700 hover:scale-110 transition-transform duration-200" title="Kênh YouTube Hieutech">
               <i data-lucide="youtube" class="w-7 h-7"></i>
             </a>
           </div>
-          <div class="hidden lg:flex space-x-1 overflow-x-auto">
-            <button onclick="switchTab('faq')" id="nav-faq" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 whitespace-nowrap">
+          <div class="hidden lg:flex space-x-0.5 overflow-x-auto">
+            <button onclick="switchTab('faq')" id="nav-faq" class="nav-btn flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 whitespace-nowrap">
               <i data-lucide="wrench" class="w-4 h-4"></i> Hỗ trợ&Lỗi
             </button>
-            <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 whitespace-nowrap">
+            <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 whitespace-nowrap">
               <i data-lucide="cpu" class="w-4 h-4"></i> Tra cứu SP
             </button>
-            <button onclick="switchTab('products')" id="nav-products" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-blue-50 text-blue-700 whitespace-nowrap">
+            <button onclick="switchTab('products')" id="nav-products" class="nav-btn flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium bg-blue-50 text-blue-700 whitespace-nowrap">
               <i data-lucide="video" class="w-4 h-4"></i> Video Hướng dẫn
             </button>
-            <button onclick="switchTab('calculator')" id="nav-calculator" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 whitespace-nowrap">
+            <button onclick="switchTab('calculator')" id="nav-calculator" class="nav-btn flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 whitespace-nowrap">
               <i data-lucide="calculator" class="w-4 h-4"></i> Tính lưu trữ/Data
             </button>
-            <button onclick="switchTab('lock')" id="nav-lock" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 whitespace-nowrap">
+            <button onclick="switchTab('lock')" id="nav-lock" class="nav-btn flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 whitespace-nowrap">
               <i data-lucide="lock" class="w-4 h-4"></i> Chọn Khóa
             </button>
-            <button onclick="switchTab('installer')" id="nav-installer" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 whitespace-nowrap">
+            <button onclick="switchTab('installer')" id="nav-installer" class="nav-btn flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 whitespace-nowrap">
               <i data-lucide="users" class="w-4 h-4"></i> Tìm Thợ
             </button>
           </div>
@@ -662,7 +654,7 @@
     </div>
 
     <!-- Traffic Widget (Firebase Realtime Database: lượt truy cập trong tháng + số người đang online) -->
-    <div id="traffic-widget" class="fixed bottom-24 right-6 z-[74] bg-white rounded-xl shadow-lg border border-gray-200 px-4 py-2.5 text-xs font-medium text-gray-600 flex flex-col gap-1.5">
+    <div id="traffic-widget" class="fixed bottom-44 right-6 z-[74] bg-white rounded-xl shadow-lg border border-gray-200 px-4 py-2.5 text-xs font-medium text-gray-600 flex flex-col gap-1.5">
       <div class="flex items-center gap-1.5">
         <i data-lucide="calendar-check" class="w-3.5 h-3.5 text-blue-500 flex-shrink-0"></i>
         <span><span id="traffic-monthly">—</span> lượt tháng này</span>
@@ -675,6 +667,11 @@
         <span><span id="traffic-online">—</span> đang online</span>
       </div>
     </div>
+
+    <!-- Zalo Bubble (always visible, direct contact) -->
+    <a href="https://zalo.me/ezvizvietnam" target="_blank" rel="noopener noreferrer" title="Liên hệ trực tiếp qua Zalo" class="fixed bottom-24 right-6 z-[75] h-14 w-14 bg-white hover:bg-gray-50 rounded-full shadow-xl border border-gray-200 flex items-center justify-center transition-transform hover:scale-105">
+      <img src="https://inkythuatso.com/uploads/images/2021/09/zalo-logo-inkythuatso-14-15-03-04.jpg" alt="Zalo" class="h-9 w-9 object-contain rounded-full" loading="lazy" onerror="this.style.background='#e5e7eb';this.alt='Zalo';">
+    </a>
 
     <!-- Feedback Bubble (always visible, links to feedback form) -->
     <a href="https://docs.google.com/forms/d/e/1FAIpQLSffyAMAfIHXoidKhQQor8TxRoJ1PiXWgESjtxcsNmiosQ7G3Q/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer" title="Góp ý cho chúng tôi" class="fixed bottom-6 right-6 z-[75] h-14 pl-4 pr-5 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-xl flex items-center gap-2 transition-transform hover:scale-105">
