@@ -661,6 +661,21 @@
       </div>
     </div>
 
+    <!-- Traffic Widget (Firebase Realtime Database: lượt truy cập trong tháng + số người đang online) -->
+    <div id="traffic-widget" class="fixed bottom-24 right-6 z-[74] bg-white rounded-xl shadow-lg border border-gray-200 px-4 py-2.5 text-xs font-medium text-gray-600 flex flex-col gap-1.5">
+      <div class="flex items-center gap-1.5">
+        <i data-lucide="calendar-check" class="w-3.5 h-3.5 text-blue-500 flex-shrink-0"></i>
+        <span><span id="traffic-monthly">—</span> lượt tháng này</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="relative flex h-2 w-2 flex-shrink-0">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+        </span>
+        <span><span id="traffic-online">—</span> đang online</span>
+      </div>
+    </div>
+
     <!-- Feedback Bubble (always visible, links to feedback form) -->
     <a href="https://docs.google.com/forms/d/e/1FAIpQLSffyAMAfIHXoidKhQQor8TxRoJ1PiXWgESjtxcsNmiosQ7G3Q/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer" title="Góp ý cho chúng tôi" class="fixed bottom-6 right-6 z-[75] h-14 pl-4 pr-5 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-xl flex items-center gap-2 transition-transform hover:scale-105">
       <i data-lucide="message-circle" class="w-6 h-6 flex-shrink-0"></i>
@@ -668,6 +683,8 @@
     </a>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
   <script>
     // DATA FAQ
     // NHÓM LỖI CHUNG (dùng cho điều hướng 3 tầng ở tab Hỗ trợ & Lỗi)
@@ -4944,6 +4961,54 @@
       lucide.createIcons();
     }
 
+    // TRAFFIC WIDGET (Firebase Realtime Database)
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyCuh7Y2pf-EMGY7z9Go50LGjfya33UrxII",
+      authDomain: "ezviztechnial.firebaseapp.com",
+      databaseURL: "https://ezviztechnial-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ezviztechnial",
+      storageBucket: "ezviztechnial.firebasestorage.app",
+      messagingSenderId: "972490081890",
+      appId: "1:972490081890:web:30d71ca97273a88c84f33b"
+    };
+
+    function initTrafficWidget() {
+      try {
+        firebase.initializeApp(FIREBASE_CONFIG);
+        const db = firebase.database();
+
+        // Lượt truy cập trong tháng: đếm 1 lần/tháng/trình duyệt (qua localStorage), không đếm theo mỗi lần tải lại trang
+        const monthKey = new Date().toISOString().slice(0, 7); // "YYYY-MM"
+        const visitsRef = db.ref('stats/visits/' + monthKey);
+        try {
+          if (localStorage.getItem('hieutech_visit_month') !== monthKey) {
+            visitsRef.transaction(cur => (cur || 0) + 1);
+            localStorage.setItem('hieutech_visit_month', monthKey);
+          }
+        } catch (e) { /* localStorage không khả dụng (chế độ ẩn danh...) - bỏ qua đếm, vẫn hiển thị số hiện tại */ }
+        visitsRef.on('value', snap => {
+          document.getElementById('traffic-monthly').textContent = snap.val() || 0;
+        });
+
+        // Số người đang online: presence pattern chuẩn của Firebase
+        const presenceListRef = db.ref('presence');
+        const myPresenceRef = presenceListRef.push();
+        db.ref('.info/connected').on('value', snap => {
+          if (snap.val() === true) {
+            myPresenceRef.onDisconnect().remove();
+            myPresenceRef.set(true);
+          }
+        });
+        presenceListRef.on('value', snap => {
+          document.getElementById('traffic-online').textContent = snap.numChildren();
+        });
+      } catch (e) {
+        console.error('Traffic widget init failed', e);
+        const widget = document.getElementById('traffic-widget');
+        if (widget) widget.classList.add('hidden');
+      }
+    }
+
     // INIT APP
     renderFaqRoot();
     filterProducts();
@@ -4952,6 +5017,7 @@
     setCalculatorSection('storage');
     initLockTool();
     initInstallerTool();
+    initTrafficWidget();
     switchTab(activeTab);
   </script>
 </body>
