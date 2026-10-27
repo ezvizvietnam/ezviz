@@ -653,11 +653,15 @@
       </div>
     </div>
 
-    <!-- Traffic Widget (Firebase Realtime Database: lượt truy cập trong tháng + số người đang online) -->
+    <!-- Traffic Widget (Firebase Realtime Database: lượt truy cập trong tháng/tuần trước + số người đang online) -->
     <div id="traffic-widget" class="fixed bottom-44 right-6 z-[74] bg-white rounded-xl shadow-lg border border-gray-200 px-4 py-2.5 text-xs font-medium text-gray-600 flex flex-col gap-1.5">
       <div class="flex items-center gap-1.5">
         <i data-lucide="calendar-check" class="w-3.5 h-3.5 text-blue-500 flex-shrink-0"></i>
         <span><span id="traffic-monthly">—</span> lượt tháng này</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <i data-lucide="bar-chart-2" class="w-3.5 h-3.5 text-indigo-500 flex-shrink-0"></i>
+        <span><span id="traffic-weekly">—</span> lượt tuần trước</span>
       </div>
       <div class="flex items-center gap-1.5">
         <span class="relative flex h-2 w-2 flex-shrink-0">
@@ -4969,13 +4973,21 @@
       appId: "1:972490081890:web:30d71ca97273a88c84f33b"
     };
 
+    // Định dạng ngày theo giờ ĐỊA PHƯƠNG của trình duyệt (không dùng toISOString() vì nó quy đổi sang giờ UTC,
+    // gây lệch ngày/tháng với giờ Việt Nam UTC+7 vào khung 0h-7h sáng)
+    function localDateStr(d) {
+      const pad = n => String(n).padStart(2, '0');
+      return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+    }
+
     function initTrafficWidget() {
       try {
         firebase.initializeApp(FIREBASE_CONFIG);
         const db = firebase.database();
+        const now = new Date();
 
         // Lượt truy cập trong tháng: đếm 1 lần/tháng/trình duyệt (qua localStorage), không đếm theo mỗi lần tải lại trang
-        const monthKey = new Date().toISOString().slice(0, 7); // "YYYY-MM"
+        const monthKey = localDateStr(now).slice(0, 7); // "YYYY-MM"
         const visitsRef = db.ref('stats/visits/' + monthKey);
         try {
           if (localStorage.getItem('hieutech_visit_month') !== monthKey) {
@@ -4986,6 +4998,27 @@
         visitsRef.on('value', snap => {
           document.getElementById('traffic-monthly').textContent = snap.val() || 0;
         });
+
+        // Lượt truy cập theo ngày: đếm 1 lần/ngày/trình duyệt, dùng để tính tổng "tuần trước" (độc lập với bộ đếm theo tháng ở trên)
+        const dayKey = localDateStr(now); // "YYYY-MM-DD"
+        try {
+          if (localStorage.getItem('hieutech_visit_day') !== dayKey) {
+            db.ref('stats/daily/' + dayKey).transaction(cur => (cur || 0) + 1);
+            localStorage.setItem('hieutech_visit_day', dayKey);
+          }
+        } catch (e) { /* localStorage không khả dụng - bỏ qua đếm */ }
+
+        // Tổng lượt tuần trước (Thứ 2 - Chủ nhật của tuần liền trước tuần hiện tại), đọc 1 lần khi tải trang
+        const dow = now.getDay(); // 0 = Chủ nhật, 1 = Thứ 2, ... 6 = Thứ 7
+        const diffToMonday = (dow === 0 ? 6 : dow - 1);
+        const thisMonday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - diffToMonday);
+        const lastSunday = new Date(thisMonday.getFullYear(), thisMonday.getMonth(), thisMonday.getDate() - 1);
+        const lastMonday = new Date(lastSunday.getFullYear(), lastSunday.getMonth(), lastSunday.getDate() - 6);
+        db.ref('stats/daily').orderByKey().startAt(localDateStr(lastMonday)).endAt(localDateStr(lastSunday)).once('value').then(snap => {
+          let total = 0;
+          snap.forEach(child => { total += (child.val() || 0); });
+          document.getElementById('traffic-weekly').textContent = total;
+        }).catch(e => console.error('Weekly traffic read failed', e));
 
         // Số người đang online: presence pattern chuẩn của Firebase
         const presenceListRef = db.ref('presence');
