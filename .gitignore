@@ -1,0 +1,7 @@
+# This repo only tracks the deployed website files.
+# Everything else in this working folder (notes, PDFs, screenshots, other
+# experiments, .claude/.agents config...) stays local and is not pushed.
+*
+!.gitignore
+!index.html
+!untitled.png
