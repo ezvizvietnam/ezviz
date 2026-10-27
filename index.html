@@ -188,13 +188,13 @@
             </a>
           </div>
           <div class="hidden lg:flex space-x-0.5 overflow-x-auto">
-            <button onclick="switchTab('faq')" id="nav-faq" class="nav-btn flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 whitespace-nowrap">
+            <button onclick="switchTab('faq')" id="nav-faq" class="nav-btn flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium bg-blue-50 text-blue-700 whitespace-nowrap">
               <i data-lucide="wrench" class="w-4 h-4"></i> Hỗ trợ&Lỗi
             </button>
             <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 whitespace-nowrap">
               <i data-lucide="cpu" class="w-4 h-4"></i> Tra cứu SP
             </button>
-            <button onclick="switchTab('products')" id="nav-products" class="nav-btn flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium bg-blue-50 text-blue-700 whitespace-nowrap">
+            <button onclick="switchTab('products')" id="nav-products" class="nav-btn flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 whitespace-nowrap">
               <i data-lucide="video" class="w-4 h-4"></i> Video Hướng dẫn
             </button>
             <button onclick="switchTab('calculator')" id="nav-calculator" class="nav-btn flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 whitespace-nowrap">
@@ -211,13 +211,13 @@
       </div>
       <!-- Mobile Nav -->
       <div class="lg:hidden flex border-t border-gray-100 bg-white overflow-x-auto hide-scrollbar">
-        <button onclick="switchTab('faq')" id="mnav-faq" class="mobile-nav flex-none w-[72px] flex flex-col items-center py-3 text-[11px] font-medium text-gray-500 border-t-2 border-transparent">
+        <button onclick="switchTab('faq')" id="mnav-faq" class="mobile-nav flex-none w-[72px] flex flex-col items-center py-3 text-[11px] font-medium text-blue-600 bg-blue-50 border-t-2 border-blue-600">
           <i data-lucide="wrench" class="w-5 h-5 mb-1"></i> Hỗ trợ
         </button>
         <button onclick="switchTab('catalog')" id="mnav-catalog" class="mobile-nav flex-none w-[72px] flex flex-col items-center py-3 text-[11px] font-medium text-gray-500 border-t-2 border-transparent">
           <i data-lucide="cpu" class="w-5 h-5 mb-1"></i> Thông số
         </button>
-        <button onclick="switchTab('products')" id="mnav-products" class="mobile-nav flex-none w-[72px] flex flex-col items-center py-3 text-[11px] font-medium text-blue-600 bg-blue-50 border-t-2 border-blue-600">
+        <button onclick="switchTab('products')" id="mnav-products" class="mobile-nav flex-none w-[72px] flex flex-col items-center py-3 text-[11px] font-medium text-gray-500 border-t-2 border-transparent">
           <i data-lucide="video" class="w-5 h-5 mb-1"></i> Video
         </button>
         <button onclick="switchTab('calculator')" id="mnav-calculator" class="mobile-nav flex-none w-[72px] flex flex-col items-center py-3 text-[11px] font-medium text-gray-500 border-t-2 border-transparent">
@@ -236,7 +236,7 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
       
       <!-- FAQ Tab -->
-      <div id="tab-faq" class="fade-in hidden">
+      <div id="tab-faq" class="fade-in">
         <div class="mb-8">
           <h1 class="text-3xl font-bold text-gray-900 mb-2">Các vấn đề thường gặp</h1>
           <p class="text-gray-500">Chọn nhóm lỗi → xem các lỗi cụ thể → xem giải pháp. Hoặc gõ từ khóa để tìm nhanh.</p>
@@ -269,7 +269,7 @@
       </div>
 
       <!-- Products Tab (Videos) -->
-      <div id="tab-products" class="fade-in">
+      <div id="tab-products" class="fade-in hidden">
         <div class="mb-8">
           <h1 class="text-3xl font-bold text-gray-900 mb-2">Video Hướng dẫn & Cài đặt</h1>
           <p class="text-gray-500">Danh sách tài liệu, video hướng dẫn cài đặt và cấu hình sản phẩm.</p>
@@ -3889,7 +3889,7 @@
     ];
 
     // STATE
-    let activeTab = 'products';
+    let activeTab = 'faq';
     let faqView = 'categories'; // 'categories' | 'issues' | 'detail' | 'search'
     let faqActiveCategory = null;
     let faqActiveEntryId = null;
