@@ -4780,22 +4780,66 @@
         </div>`;
     }
 
-    function compareTableHTML(a, b) {
-      const keys = [...Object.keys(a.specs)];
-      Object.keys(b.specs).forEach(k => { if (!keys.includes(k)) keys.push(k); });
+    // Trường trong `specs` đã được bao phủ bởi `featureMatrix` (chi tiết hơn) - bỏ qua để tránh lặp khi so sánh khóa cửa
+    const COMPARE_SPECS_COVERED_BY_MATRIX = new Set([
+      'Phương thức mở khóa', 'Kết nối', 'Nguồn điện / Pin', 'Dung lượng lưu trữ người dùng',
+      'Camera / Màn hình tích hợp', 'Chuẩn chống nước & bụi'
+    ]);
+
+    function compareSections(a, b) {
+      if (a.featureMatrix && b.featureMatrix) {
+        const matrixCats = [...new Set([...Object.keys(a.featureMatrix), ...Object.keys(b.featureMatrix)])];
+        const sections = matrixCats.map(category => {
+          const aRows = a.featureMatrix[category] || [];
+          const bRows = b.featureMatrix[category] || [];
+          const labels = [...new Set([...aRows.map(r => r[0]), ...bRows.map(r => r[0])])];
+          const rows = labels.map(label => {
+            const va = (aRows.find(r => r[0] === label) || [null, '—'])[1];
+            const vb = (bRows.find(r => r[0] === label) || [null, '—'])[1];
+            return { key: label, va, vb, diff: va !== vb };
+          });
+          return { category, rows };
+        });
+        const otherKeys = [...new Set([...Object.keys(a.specs), ...Object.keys(b.specs)])]
+          .filter(k => !COMPARE_SPECS_COVERED_BY_MATRIX.has(k));
+        if (otherKeys.length) {
+          const rows = otherKeys.map(key => {
+            const va = a.specs[key] || '—';
+            const vb = b.specs[key] || '—';
+            return { key, va, vb, diff: va !== vb };
+          });
+          sections.push({ category: 'Thông số khác', rows });
+        }
+        return sections;
+      }
+      const keys = [...new Set([...Object.keys(a.specs), ...Object.keys(b.specs)])];
       const rows = keys.map(key => {
         const va = a.specs[key] || '—';
         const vb = b.specs[key] || '—';
         return { key, va, vb, diff: va !== vb };
       });
-      const diffCount = rows.filter(r => r.diff).length;
-      const shown = compareState.diffOnly ? rows.filter(r => r.diff) : rows;
-      const rowsHTML = shown.map(r => `
-        <div class="grid grid-cols-[96px_1fr_1fr] sm:grid-cols-[200px_1fr_1fr] gap-3 sm:gap-4 py-3 px-3 border-b border-gray-100 ${r.diff ? 'bg-amber-50' : ''}">
-          <div class="text-xs sm:text-sm font-semibold text-gray-700">${r.key}</div>
-          <div class="text-xs sm:text-sm text-gray-600">${r.va}</div>
-          <div class="text-xs sm:text-sm text-gray-600">${r.vb}</div>
-        </div>`).join('');
+      return [{ category: null, rows }];
+    }
+
+    function compareTableHTML(a, b) {
+      const sections = compareSections(a, b);
+      const allRows = sections.flatMap(s => s.rows);
+      const diffCount = allRows.filter(r => r.diff).length;
+      const rowsHTML = sections.map(s => {
+        const shown = compareState.diffOnly ? s.rows.filter(r => r.diff) : s.rows;
+        if (!shown.length) return '';
+        const headerHTML = s.category ? `
+          <div class="py-2 px-3 bg-gray-50 border-b border-gray-200">
+            <span class="text-xs font-bold text-blue-700 uppercase tracking-wide">${s.category}</span>
+          </div>` : '';
+        const bodyHTML = shown.map(r => `
+          <div class="grid grid-cols-[96px_1fr_1fr] sm:grid-cols-[200px_1fr_1fr] gap-3 sm:gap-4 py-3 px-3 border-b border-gray-100 ${r.diff ? 'bg-amber-50' : ''}">
+            <div class="text-xs sm:text-sm font-semibold text-gray-700">${r.key}</div>
+            <div class="text-xs sm:text-sm text-gray-600">${r.va}</div>
+            <div class="text-xs sm:text-sm text-gray-600">${r.vb}</div>
+          </div>`).join('');
+        return headerHTML + bodyHTML;
+      }).join('');
       const headCell = (p, slot) => `
         <div class="flex items-center gap-2 min-w-0">
           <span class="w-6 h-6 flex-shrink-0 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">${slot}</span>
@@ -4803,7 +4847,7 @@
         </div>`;
       return `
         <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
-          <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2"><i data-lucide="scale" class="w-5 h-5 text-blue-600"></i> Bảng so sánh <span class="text-sm font-medium text-gray-500">(${diffCount}/${rows.length} thông số khác nhau)</span></h2>
+          <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2"><i data-lucide="scale" class="w-5 h-5 text-blue-600"></i> Bảng so sánh <span class="text-sm font-medium text-gray-500">(${diffCount}/${allRows.length} thông số khác nhau)</span></h2>
           <div class="flex items-center gap-2">
             <button onclick="swapCompare()" class="text-sm px-3 py-2 rounded-lg border border-gray-200 bg-white text-gray-600 hover:text-blue-600 flex items-center gap-1.5"><i data-lucide="arrow-left-right" class="w-4 h-4"></i> Đổi chỗ</button>
             <button onclick="toggleCompareDiffOnly()" class="text-sm px-3 py-2 rounded-lg border flex items-center gap-1.5 ${compareState.diffOnly ? 'bg-amber-100 border-amber-300 text-amber-800' : 'bg-white border-gray-200 text-gray-600 hover:text-blue-600'}"><i data-lucide="filter" class="w-4 h-4"></i> Chỉ hiện điểm khác</button>
